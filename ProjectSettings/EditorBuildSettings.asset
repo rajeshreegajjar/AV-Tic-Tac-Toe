@@ -1,0 +1,14 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Tic-Tac-Toe.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: b056691a27b5247e0ab4eafbfd60931d, type: 2}
+    com.unity.localization.addressable-group-rules: {fileID: 11400000, guid: 23dbc1d6577734f98bfe5f242148c268, type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: 87f7adf5ac1dc4a39a52a26292a365d3, type: 2}
