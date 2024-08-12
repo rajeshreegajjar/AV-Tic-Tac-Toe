@@ -7,6 +7,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Video;
 using System;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
 public class MediaDownloadManager : MonoBehaviour
 {
@@ -28,44 +29,33 @@ public class MediaDownloadManager : MonoBehaviour
             Instance = this;
     }
 
-    public void DownloadAndPlayMedia(IMediaPlayer mediaPlayer,string address,bool isVideo, Transform parent)
+    public void DownloadAndPlayMedia(IMediaPlayer mediaPlayer, string address, bool isVideo, Transform parent)
     {
         onMediaDownload.Invoke();
-        StartCoroutine(DownloadCoroutine(mediaPlayer , address,isVideo,parent));
+        StartCoroutine(DownloadCoroutine(mediaPlayer, address, isVideo, parent));
     }
 
-    private IEnumerator DownloadCoroutine(IMediaPlayer mediaPlayer, string address,bool isVideo,Transform parent)
+    private IEnumerator DownloadCoroutine(IMediaPlayer mediaPlayer, string address, bool isVideo, Transform parent)
     {
         GameObject progressBarObject = Instantiate(progressBarPrefab, parent);
         ProgressBar progressBar = progressBarObject.GetComponent<ProgressBar>();
         yield return null;
 
-        AsyncOperationHandle handle = Addressables.DownloadDependenciesAsync(address);
-        while (!handle.IsDone)
-        {
-            progressBar.SetProgress(handle.PercentComplete);
-            yield return null;
-        }
+        Debug.Log("Start Loading");
+        mediaPlayer.OnMediaLoaded(address,progressBar);
 
-        if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
-            Debug.Log(handle.Status);
-            mediaPlayer.OnMediaLoaded(true, address);
-        }
-        else
-        {
-            Debug.LogError("Download failed.");
-        }
+        yield return new WaitUntil(() => mediaPlayer.IsMediaLoaded() == true);
+        Debug.Log("Loading Complete");
 
-        Destroy(progressBarObject);
+        Destroy(progressBar.gameObject);
     }
 
-    public void OnCompleteMediadPlay(float duration,GameObject mediaPlayer)
+    public void OnCompleteMediadPlay(float duration, GameObject mediaPlayer)
     {
         StartCoroutine(CompleteMediaPlay(duration, mediaPlayer));
     }
 
-    IEnumerator CompleteMediaPlay(float time,GameObject mediaPlayer)
+    IEnumerator CompleteMediaPlay(float time, GameObject mediaPlayer)
     {
         Debug.Log("CompleteMediaPlay " + time);
         var waitForClipRemainingTime = new WaitForSeconds(time);
